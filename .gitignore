@@ -1,0 +1,10 @@
+*.o
+.*.swp
+.d
+weather_data.pb.cc
+weather_data.pb.h
+weather_data_pb2.py
+weather_edge_server
+weather_raw_store
+weather_sql_store
+weather_station

@@ -1,0 +1,38 @@
+// FIXME.  Comment here and in message below.
+
+syntax = "proto3";
+
+package zweather;
+
+// FIXME Protobufs has a Timestamp but I was having compiler problems when
+// using it in C++.  For now, we will reimplement it here.  I don't need the
+// nanosecond resolution but will keep it for now.
+message Timestamp {
+  int64 seconds = 1;
+  int64 nanos = 2;
+}
+
+message Coordinates {
+  // FIXME fixed point?
+  float latitude = 1;
+  float longitude = 2;
+}
+
+message WeatherData {
+  // FIXME add protocol version number.
+  string authentication_token = 1;
+  string station_id = 2;
+
+  Coordinates location = 3;
+
+  Timestamp sample_time = 4;
+  Timestamp send_time = 5;
+  Timestamp receive_time = 6;
+
+  // FIXME fixed point?
+  float temperature = 7;
+  // FIXME fixed point?
+  float humidity = 8;
+  // Add other data as needed.
+}
+
