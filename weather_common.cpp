@@ -2,20 +2,13 @@
 #include <iostream>
 #include <string>
 
+#include "base64string.h"
+#include "rawbytes.h"
 #include "weather_common.h"
 
 std::ostream&
 operator<<( std::ostream& os,
             const zweather::WeatherData& data_point ) {
-
-    // Protobufs doesn't know the length on the wire without serializing so we
-    // serialize the value.  Report -1 in the unlikely event of an error.
-    int num_bytes = -1;
-    std::string buf;
-    bool good = data_point.SerializeToString(&buf);
-    if (good ) {
-        num_bytes = buf.size();
-    }
 
     os <<   "token:        " << data_point.authentication_token()
        << "\nstation:      " << data_point.station_id()
@@ -35,8 +28,22 @@ operator<<( std::ostream& os,
        << "\ntemperature:  " << data_point.temperature()
        << "\nhumidity:     " << data_point.humidity()
 
-       << "\nbytes:        " << num_bytes;
+       << "\nbytes:        " << data_point.ByteSizeLong();
        // No final newline.  Sender should add that if needed.
 
     return os;
 }
+
+Base64String
+ProtoBufToBase64( const zweather::WeatherData& data_point ) {
+    std::string tmp;
+
+    bool good = data_point.SerializeToString(&tmp);
+    // FIXME comment.
+    if (!good) {
+        tmp.clear();
+    }
+
+    return Base64String(RawBytes(tmp));
+}
+
