@@ -13,22 +13,33 @@ PROGS += weather_edge_server
 PROGS += weather_sql_store
 PROGS += weather_raw_store
 
+# Object files that everything needs
+SHARED_OBJ += weather_common.o
+SHARED_OBJ += weather_data.pb.o
+SHARED_OBJ += base64string.o
+SHARED_OBJ += hexstring.o
+SHARED_OBJ += rawbytes.o
+
+# Extra object files that tests need
+SHARED_OBJ_TEST += testmain.o
+
 PROTOBUFS +=  weather_data.pb.h weather_data.pb.cc weather_data_pb2.py
 
-TESTPROGS = ${PROGS:=-test}
-TESTPROGS += machine-test
+TESTPROGS += base64string-test
+TESTPROGS += hexstring-test
+TESTPROGS += rawbytes-test
 
-# FIXME add TESTPROGS
-#all: ${PROGS} ${TESTPROGS} ${PROTOBUFS}
-all: ${PROGS} ${PROTOBUFS}
+all: ${PROGS} ${TESTPROGS} ${PROTOBUFS}
 
-weather_station: weather_station.o weather_data.pb.o weather_common.o
+test: $(TESTPROGS:-test=-test.out)
 
-weather_edge_server: weather_edge_server.o weather_data.pb.o weather_common.o
+weather_station: weather_station.o ${SHARED_OBJ}
 
-weather_sql_store: weather_sql_store.o weather_data.pb.o weather_common.o
+weather_edge_server: weather_edge_server.o ${SHARED_OBJ}
 
-weather_raw_store: weather_raw_store.o weather_data.pb.o weather_common.o
+weather_sql_store: weather_sql_store.o ${SHARED_OBJ}
+
+weather_raw_store: weather_raw_store.o ${SHARED_OBJ}
 
 
 # FIXME protoc supports automatic dependency generation.
@@ -41,8 +52,12 @@ weather_data.pb.h weather_data.pb.cc weather_data_pb2.py: weather_data.proto
 
 test: $(TESTPROGS:-test=-test.out)
 
+base64string-test: base64string-test.o ${SHARED_OBJ} ${SHARED_OBJ_TEST} -lgtest
+hexstring-test: hexstring-test.o ${SHARED_OBJ} ${SHARED_OBJ_TEST} -lgtest
+rawbytes-test: rawbytes-test.o ${SHARED_OBJ} ${SHARED_OBJ_TEST} -lgtest
+
 clean:
-	rm -f ${PROGS} ${PROTOBUFS} ${TESTPROGS} *.o ${DEPDIR}/* *-test.out
+	rm -f ${PROGS} ${PROTOBUFS} ${SHARED_OBJ} ${TESTPROGS} *.o ${DEPDIR}/* *-test.out
 
 %-test.out: %-test
 	set -o pipefail; \

@@ -1,6 +1,12 @@
 *.o
 .*.swp
 .d
+base64string-test
+base64string-test.out
+hexstring-test
+hexstring-test.out
+rawbytes-test
+rawbytes-test.out
 weather_data.pb.cc
 weather_data.pb.h
 weather_data_pb2.py
