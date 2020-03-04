@@ -17,7 +17,7 @@ setup_tuning_variables() {
     Tune tune( "WEATHER_STATION_" );
 
     tune.add_variable( "SERVER_HOSTNAME", "localhost" );
-    tune.add_variable( "SERVER_PORT", "5557" );
+    tune.add_variable( "SERVER_PORT", "5555" );
     tune.add_variable( "SAMPLE_INTERVAL", "3" );
 
     return tune;
