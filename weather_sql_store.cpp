@@ -5,15 +5,29 @@
 
 #include "weather_common.h"
 #include "weather_data.pb.h"
+#include "tune.h"
+
+
+static Tune
+setup_tuning_variables() {
+    Tune tune( "WEATHER_SQL_STORE_" );
+
+    tune.add_variable( "LISTEN_PORT", "5556" );
+    tune.add_variable( "THROTTLE_TIME", "60" );
+
+    return tune;
+}
 
 class Throttler {
-    // FIXME add constructor to pass this in.
-    const uint throttle_time = 60; // Seconds
+    const unsigned long throttle_time; // Seconds
 
     //  Last time a station was allowed to insert.
     std::map<std::string,uint64_t> last_inserted_times;
 
   public:
+    Throttler( uint throttle_time ) :
+        throttle_time( throttle_time ) {}
+
     // Check if we can do an insert for the station.  Return true if we can.
     // We also update the last inserted time for the station.  I.E.  You are
     // expected to perform the insert operation if you can.
@@ -47,15 +61,18 @@ class Throttler {
 
 int main()
 {
-    Throttler throttler;
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+    Tune tune = setup_tuning_variables();
+
+    Throttler throttler( std::stoul( tune.get( "THROTTLE_TIME" ) ) );
 
     // initialize the zmq context with a single IO thread
     zmq::context_t context{1};
 
     // construct a response socket and bind to interface
     zmq::socket_t socket{context, ZMQ_PULL};
-    // FIXME move to common or make configurable.
-    socket.bind("tcp://*:5556");
+    socket.bind( "tcp://*:" + tune.get( "LISTEN_PORT" ) );
 
     for (;;) {
         zmq::message_t request;

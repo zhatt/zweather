@@ -34,12 +34,16 @@ operator<<( std::ostream& os,
     return os;
 }
 
+// Convert the data_point protobuf to a base64 encoded string.  If the protobuf
+// is corrupted, returns an empty string that is base64 encoded.
+// FIXME figure out how to bettern handle corrupted protobuf.
 Base64String
 ProtoBufToBase64( const zweather::WeatherData& data_point ) {
     std::string tmp;
 
     bool good = data_point.SerializeToString(&tmp);
-    // FIXME comment.
+    // Return an empty object if we can't deserialize the protobuf.  This 
+    // means it is corrupted.
     if (!good) {
         tmp.clear();
     }

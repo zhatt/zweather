@@ -3,7 +3,6 @@
 #include <map>
 #include <string>
 
-// FIXME documentation comments
 class Tune {
     const std::string prefix;
     std::map<std::string,std::string> variables;

@@ -19,6 +19,7 @@ SHARED_OBJ += weather_data.pb.o
 SHARED_OBJ += base64string.o
 SHARED_OBJ += hexstring.o
 SHARED_OBJ += rawbytes.o
+SHARED_OBJ += tune.o
 
 # Extra object files that tests need
 SHARED_OBJ_TEST += testmain.o

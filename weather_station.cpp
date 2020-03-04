@@ -9,18 +9,34 @@
 
 #include "weather_common.h"
 #include "weather_data.pb.h"
+#include "tune.h"
 
-const unsigned data_interval = 3;
+
+static Tune
+setup_tuning_variables() {
+    Tune tune( "WEATHER_STATION_" );
+
+    tune.add_variable( "SERVER_HOSTNAME", "localhost" );
+    tune.add_variable( "SERVER_PORT", "5557" );
+    tune.add_variable( "SAMPLE_INTERVAL", "3" );
+
+    return tune;
+}
 
 
 int main() {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-    zmq::context_t context(1);
-    zmq::socket_t socket(context, ZMQ_PUSH);
+    Tune tune = setup_tuning_variables();
 
-    socket.connect ("tcp://localhost:5555");
+    const unsigned long data_interval =
+        std::stoul( tune.get( "SAMPLE_INTERVAL" ) );
 
+    zmq::context_t context( 1 );
+    zmq::socket_t socket( context, ZMQ_PUSH );
+
+    socket.connect ( "tcp://" + tune.get( "SERVER_HOSTNAME" ) + ":" +
+                     tune.get( "SERVER_PORT" ) );
 
     zweather::WeatherData data_point;
 
