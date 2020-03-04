@@ -7,23 +7,47 @@
 
 #include "weather_common.h"
 #include "weather_data.pb.h"
+#include "tune.h"
+
+
+static Tune
+setup_tuning_variables() {
+    Tune tune( "WEATHER_RAW_STORE_" );
+
+    tune.add_variable( "LISTEN_PORT", "5555" );
+
+    tune.add_variable( "SQL_STORE_HOSTNAME", "localhost" );
+    tune.add_variable( "SQL_STORE_PORT", "5556" );
+
+    tune.add_variable( "RAW_STORE_HOSTNAME", "localhost" );
+    tune.add_variable( "RAW_STORE_PORT", "5557" );
+
+    return tune;
+}
+
 
 int main()
 {
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+    Tune tune = setup_tuning_variables();
+
     // initialize the zmq context with a single IO thread
     zmq::context_t context{1};
 
     // construct a socket and bind to interface for receiving data.
     zmq::socket_t in_socket{ context, ZMQ_PULL };
-    in_socket.bind( "tcp://*:5555" );
+    in_socket.bind( "tcp://*:" + tune.get( "LISTEN_PORT" ) );
 
     // construct a socket and bind to interface for sending to SQL store.
     zmq::socket_t out_sql_store_socket{ context, ZMQ_PUSH };
-    out_sql_store_socket.connect( "tcp://localhost:5556" );
+    out_sql_store_socket.connect( "tcp://" + tune.get( "SQL_STORE_HOSTNAME" ) +
+                                  ":" + tune.get( "SQL_STORE_PORT" ) );
 
     // construct a socket and bind to interface for sending to raw store.
     zmq::socket_t out_raw_store_socket{ context, ZMQ_PUSH };
-    out_raw_store_socket.connect( "tcp://localhost:5557" );
+    out_raw_store_socket.connect( "tcp://" + tune.get( "RAW_STORE_HOSTNAME" ) +
+                                  ":" + tune.get( "RAW_STORE_PORT" ) );
 
     for (;;) {
         zmq::message_t message_in;
