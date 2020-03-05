@@ -46,3 +46,7 @@ message WeatherData {
   // wind, etc.
 }
 
+message TapStats {
+    uint64 bytes_received = 1;
+    uint64 bytes_sent = 2;
+}

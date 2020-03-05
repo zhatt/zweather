@@ -3,9 +3,10 @@
 
 #include <zmq.hpp>
 
+#include "tune.h"
+#include "statsmonitortap.h"
 #include "weather_common.h"
 #include "weather_data.pb.h"
-#include "tune.h"
 
 
 static Tune
@@ -13,6 +14,8 @@ setup_tuning_variables() {
     Tune tune( "WEATHER_SQL_STORE_" );
 
     tune.add_variable( "LISTEN_PORT", "5556" );
+    tune.add_variable( "TAP_PORT", "6556" );
+
     tune.add_variable( "THROTTLE_TIME", "60" );
 
     return tune;
@@ -74,11 +77,16 @@ int main()
     zmq::socket_t socket{ context, ZMQ_PULL };
     socket.bind( "tcp://*:" + tune.get( "LISTEN_PORT" ) );
 
+
+    StatsMonitorTap stats_tap( context,
+                               std::string( tune.get( "TAP_PORT" ) ) );
+
     for (;;) {
         zmq::message_t request;
 
         // Receive a request from edge server.
         socket.recv( request, zmq::recv_flags::none );
+        stats_tap.add_bytes_received( request.size() );
 
         zweather::WeatherData data_point;
         std::string data( reinterpret_cast<const char*>( request.data() ) );
@@ -91,6 +99,8 @@ int main()
             std::cout << "Not inserting in SQL\n";
         }
         std::cout << data_point << "\n\n";
+
+        stats_tap.service_tap();
     }
 
     return 0;

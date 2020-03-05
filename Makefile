@@ -8,6 +8,7 @@ CXXFLAGS += -I/usr/include/google/protobuf -I/usr/include/google
 
 LDFLAGS = -lstdc++ -lprotobuf -lzmq
 
+PROGS += tap_monitor 
 PROGS += weather_station
 PROGS += weather_edge_server
 PROGS += weather_sql_store
@@ -17,6 +18,7 @@ PROGS += weather_raw_store
 SHARED_OBJ += base64string.o
 SHARED_OBJ += hexstring.o
 SHARED_OBJ += rawbytes.o
+SHARED_OBJ += statsmonitortap.o
 SHARED_OBJ += tune.o
 SHARED_OBJ += weather_common.o
 SHARED_OBJ += weather_data.pb.o
@@ -43,6 +45,7 @@ weather_sql_store: weather_sql_store.o ${SHARED_OBJ}
 
 weather_raw_store: weather_raw_store.o ${SHARED_OBJ}
 
+tap_monitor: tap_monitor.o ${SHARED_OBJ}
 
 # FIXME protoc supports automatic dependency generation.
 # FIXME after make clean this dependency doesn't work for make all,

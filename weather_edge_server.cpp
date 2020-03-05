@@ -5,9 +5,10 @@
 
 #include <zmq.hpp>
 
+#include "statsmonitortap.h"
+#include "tune.h"
 #include "weather_common.h"
 #include "weather_data.pb.h"
-#include "tune.h"
 
 
 static Tune
@@ -15,6 +16,7 @@ setup_tuning_variables() {
     Tune tune( "WEATHER_RAW_STORE_" );
 
     tune.add_variable( "LISTEN_PORT", "5555" );
+    tune.add_variable( "TAP_PORT", "6555" );
 
     tune.add_variable( "SQL_STORE_HOSTNAME", "localhost" );
     tune.add_variable( "SQL_STORE_PORT", "5556" );
@@ -49,11 +51,15 @@ int main()
     out_raw_store_socket.connect( "tcp://" + tune.get( "RAW_STORE_HOSTNAME" ) +
                                   ":" + tune.get( "RAW_STORE_PORT" ) );
 
+    StatsMonitorTap stats_tap( context,
+                               std::string( tune.get( "TAP_PORT" ) ) );
+
     for (;;) {
         zmq::message_t message_in;
 
         // receive a request from client
         in_socket.recv( message_in, zmq::recv_flags::none );
+        stats_tap.add_bytes_received( message_in.size() );
 
         struct timeval receive_time;
         gettimeofday( &receive_time, NULL );
@@ -84,8 +90,16 @@ int main()
         zmq::message_t message_to_raw_store;
         message_to_raw_store.copy( message_to_sql_store );
 
+        // Sending releases the message so grab the size.
+        unsigned size = message_to_sql_store.size();
         out_sql_store_socket.send( message_to_sql_store );
+        stats_tap.add_bytes_sent( size );
+
+        size = message_to_raw_store.size();
         out_raw_store_socket.send( message_to_raw_store );
+        stats_tap.add_bytes_sent( size );
+
+        stats_tap.service_tap();
     }
 
     return 0;

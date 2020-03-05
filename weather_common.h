@@ -9,6 +9,10 @@ std::ostream&
 operator<<( std::ostream& os,
             const zweather::WeatherData& data_point );
 
+std::ostream&
+operator<<( std::ostream& os,
+            const zweather::TapStats& stats );
+
 Base64String
 ProtoBufToBase64( const zweather::WeatherData& data_point );
 #endif

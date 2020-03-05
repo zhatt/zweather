@@ -11,6 +11,7 @@
 #include <zmq.hpp>
 
 #include "base64string.h"
+#include "statsmonitortap.h"
 #include "tune.h"
 #include "weather_common.h"
 #include "weather_data.pb.h"
@@ -21,6 +22,8 @@ setup_tuning_variables() {
     Tune tune( "WEATHER_RAW_STORE_" );
 
     tune.add_variable( "LISTEN_PORT", "5557" );
+    tune.add_variable( "TAP_PORT", "6557" );
+
     tune.add_variable( "LOG_PATH_PREFIX", "rawlogs/" );
     tune.add_variable( "LOG_ROTATION_SIZE", "10000" );
 
@@ -132,11 +135,15 @@ int main()
     RawLogWriter raw_log( tune.get( "LOG_PATH_PREFIX"),
                           std::stoul( tune.get( "LOG_ROTATION_SIZE" ) ) );
 
+    StatsMonitorTap stats_tap( context,
+                               std::string( tune.get( "TAP_PORT" ) ) );
+
     for (;;) {
         zmq::message_t request;
 
         // receive a request from client
         socket.recv(request, zmq::recv_flags::none);
+        stats_tap.add_bytes_received( request.size() );
 
         // convert to protobuf.
         zweather::WeatherData data_point;
@@ -151,6 +158,8 @@ int main()
         // write to log.
         std::cout << log_line.str();
         raw_log.write_line(log_line.str());
+
+        stats_tap.service_tap();
     }
 
     return 0;

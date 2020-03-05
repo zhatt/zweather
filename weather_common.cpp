@@ -29,20 +29,31 @@ operator<<( std::ostream& os,
        << "\nhumidity:     " << data_point.humidity()
 
        << "\nbytes:        " << data_point.ByteSizeLong();
-       // No final newline.  Sender should add that if needed.
+       // No final newline.  Caller should add that if needed.
+
+    return os;
+}
+
+std::ostream&
+operator<<( std::ostream& os,
+            const zweather::TapStats& stats ) {
+
+    os <<   "rx: " << stats.bytes_received()
+       << "\ntx: " << stats.bytes_sent();
+       // No final newline.  Caller should add that if needed.
 
     return os;
 }
 
 // Convert the data_point protobuf to a base64 encoded string.  If the protobuf
 // is corrupted, returns an empty string that is base64 encoded.
-// FIXME figure out how to bettern handle corrupted protobuf.
+// FIXME figure out how to better handle corrupted protobuf.
 Base64String
 ProtoBufToBase64( const zweather::WeatherData& data_point ) {
     std::string tmp;
 
     bool good = data_point.SerializeToString(&tmp);
-    // Return an empty object if we can't deserialize the protobuf.  This 
+    // Return an empty object if we can't deserialize the protobuf.  This
     // means it is corrupted.
     if (!good) {
         tmp.clear();
