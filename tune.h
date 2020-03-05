@@ -1,5 +1,8 @@
 // Helper class to get tuning values from environment variables.
 
+#ifndef TUNE_H
+#define TUNE_H
+
 #include <map>
 #include <string>
 
@@ -26,3 +29,4 @@ class Tune {
     std::string get( const std::string& variable_name ) const;
 };
 
+#endif // TUNE_H
