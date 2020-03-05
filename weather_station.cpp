@@ -76,8 +76,7 @@ int main() {
         memcpy(request.data(), buf.c_str(), buf.size());
         int rc = socket.send(request);
         if (rc == -1) {
-            std::cerr << "Error sending" << std::endl;
-            exit(1);
+            throw( std::runtime_error( "Error sending" ) );
         }
 
         sleep( data_interval );

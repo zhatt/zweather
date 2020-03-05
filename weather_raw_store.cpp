@@ -42,21 +42,18 @@ generate_log_name(const std::string& prefix) {
 
     int rc = gettimeofday(&tv, NULL);
     if (rc != 0) {
-        std::cerr << "gettimeofday failed" << std::endl;
-        exit(1);
+        throw( std::runtime_error( "gettimeofday failed" ) );
     }
 
     nowtime = tv.tv_sec;
     void* err = localtime_r(&nowtime, &nowtm);
     if (err != &nowtm) {
-        std::cerr << "localtime failed" << std::endl;
-        exit(1);
+        throw( std::runtime_error( "localtime failed" ) );
     }
 
     rc = strftime(tmbuf, sizeof tmbuf, "%Y-%m-%dT%H:%M:%S", &nowtm);
     if (rc == 0) {
-        std::cerr << "strftime failed" << std::endl;
-        exit(1);
+        throw( std::runtime_error( "strftime failed" ) );
     }
 
     std::string log_name( prefix + "raw--" + std::string(tmbuf) + ".log" );
@@ -78,8 +75,7 @@ class RawLogWriter {
         std::string log_name = generate_log_name( prefix );
         fd = open(log_name.c_str(), O_CREAT|O_EXCL|O_WRONLY, 0777);
         if (fd == -1) {
-            std::cerr << "log file open failed" << std::endl;
-            exit(1);
+            throw( std::runtime_error( "log file open failed" ) );
         }
     }
 
@@ -87,14 +83,12 @@ class RawLogWriter {
         if (bytes_written > rotation_size) {
             int rc = fsync(fd);
             if (rc == -1) {
-                std::cerr << "log file fsync failed" << std::endl;
-                exit(1);
+                throw( std::runtime_error( "log file fsync failed" ) );
             }
 
             rc = close(fd);
             if (rc == -1) {
-                std::cerr << "log file close failed" << std::endl;
-                exit(1);
+                throw( std::runtime_error( "log file close failed" ) );
             }
 
             fd = -1;

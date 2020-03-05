@@ -5,7 +5,7 @@
 Tune::Tune( const std::string prefix ) :
     prefix( prefix ) {
         if ( prefix.size() == 0 ) {
-            throw("Error prefix cannot be empty");
+            throw( std::logic_error( "Error prefix cannot be empty" ) );
         }
     }
 
@@ -36,7 +36,7 @@ Tune::get( const std::string& variable_name ) const {
 
     auto iter = variables.find( name_with_prefix );
     if ( iter == variables.end() ) {
-        throw( "Unknown tuning variable " + name_with_prefix );
+        throw( std::logic_error( "Unknown tuning variable " + name_with_prefix ) );
     }
 
     return iter->second;

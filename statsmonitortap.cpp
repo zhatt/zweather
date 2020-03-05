@@ -39,8 +39,7 @@ StatsMonitorTap::service_tap() {
             std::string buf;
             bool good = stats.SerializeToString( &buf );
             if ( ! good ) {
-                std::cerr << "Error serializing" << std::endl;
-                exit( 1 );
+                throw( std::runtime_error( "Error serializing" ) );
             }
 
             zmq::message_t reply( buf.size() );
