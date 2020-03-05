@@ -51,6 +51,7 @@ int main() {
     data_point.mutable_location()->set_longitude(-122.401389);
 
     while(true) {
+        // FIXME  We are sending dummy data and it is all the same.
         data_point.set_temperature(12.22);  // degrees celsius
         data_point.set_humidity(57);  // percent
 
