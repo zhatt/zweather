@@ -39,14 +39,21 @@ int main()
 
     // construct a socket and bind to interface for receiving data.
     zmq::socket_t in_socket{ context, ZMQ_PULL };
+
+    // The weather station sender is untrusted.  Limit the max message size.
+    // This needs set before binding.
+    int64_t max_message_size = 1000;
+    in_socket.setsockopt( ZMQ_MAXMSGSIZE, &max_message_size,
+                          sizeof( max_message_size ) );
+
     in_socket.bind( "tcp://*:" + tune.get( "LISTEN_PORT" ) );
 
-    // construct a socket and bind to interface for sending to SQL store.
+    // Construct a socket and bind to interface for sending to SQL store.
     zmq::socket_t out_sql_store_socket{ context, ZMQ_PUSH };
     out_sql_store_socket.connect( "tcp://" + tune.get( "SQL_STORE_HOSTNAME" ) +
                                   ":" + tune.get( "SQL_STORE_PORT" ) );
 
-    // construct a socket and bind to interface for sending to raw store.
+    // Construct a socket and bind to interface for sending to raw store.
     zmq::socket_t out_raw_store_socket{ context, ZMQ_PUSH };
     out_raw_store_socket.connect( "tcp://" + tune.get( "RAW_STORE_HOSTNAME" ) +
                                   ":" + tune.get( "RAW_STORE_PORT" ) );
@@ -68,7 +75,8 @@ int main()
         zweather::WeatherData data_point;
         data_point.ParseFromString( data );
 
-        //FIXME validate buffer.  It comes from untrusted client.
+        // FIXME validate buffer.  It comes from untrusted client.
+        // We need to validate the secret, etc.
         data_point.mutable_receive_time()->set_seconds( receive_time.tv_sec );
         data_point.mutable_receive_time()->set_nanos( receive_time.tv_usec * 1000 );
 
