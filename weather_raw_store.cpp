@@ -117,6 +117,8 @@ int main()
 {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
+    std::cout << "Starting raw store" << std::endl;
+
     Tune tune = setup_tuning_variables();
 
     // initialize the zmq context with a single IO thread
@@ -150,7 +152,7 @@ int main()
                  << ProtoBufToBase64(data_point) << "\n";
 
         // write to log.
-        std::cout << log_line.str();
+        std::cout << log_line.str() << std::flush;
         raw_log.write_line(log_line.str());
 
         stats_tap.service_tap();

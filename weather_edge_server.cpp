@@ -32,6 +32,8 @@ int main()
 {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
+    std::cout << "Starting weather edge server" << std::endl;
+
     Tune tune = setup_tuning_variables();
 
     // initialize the zmq context with a single IO thread
@@ -81,8 +83,9 @@ int main()
         data_point.mutable_receive_time()->set_nanos( receive_time.tv_usec * 1000 );
 
         // FIXME remove or make trace conditional.
-        std::cout << "Received " << std::endl;
-        std::cout << data_point << "\n\n";
+        std::cout << "Received\n";
+        std::cout << data_point << "\n";
+        std::cout << std::endl;
 
         // Reserialize with receive time.
         std::string buf;

@@ -27,6 +27,8 @@ setup_tuning_variables() {
 int main() {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
+    std::cout << "Starting weather station" << std::endl;
+
     Tune tune = setup_tuning_variables();
 
     const unsigned long data_interval =
@@ -65,7 +67,7 @@ int main() {
         data_point.mutable_send_time()->set_nanos(tv.tv_usec * 1000);
 
         std::cout << "Sending sample:\n";
-        std::cout << data_point << "\n\n";
+        std::cout << data_point << "\n" << std::endl;
 
         std::string buf;
         bool good = data_point.SerializeToString(&buf);

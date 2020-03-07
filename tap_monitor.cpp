@@ -26,6 +26,8 @@ int main()
 {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
+    std::cout << "Starting tap monitor" << std::endl;
+
     Tune tune = setup_tuning_variables();
 
      const unsigned long monitor_interval =
@@ -53,7 +55,7 @@ int main()
         std::string data( reinterpret_cast<const char*>( reply.data() ) );
         stats.ParseFromString( data );
 
-        std::cout << stats << "\n\n";
+        std::cout << stats << "\n" << std::endl;
 
         sleep( monitor_interval );
     }

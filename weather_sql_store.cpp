@@ -66,6 +66,8 @@ int main()
 {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 
+    std::cout << "Starting SQL store" << std::endl;
+
     Tune tune = setup_tuning_variables();
 
     Throttler throttler( std::stoul( tune.get( "THROTTLE_TIME" ) ) );
@@ -98,7 +100,7 @@ int main()
         } else {
             std::cout << "Not inserting in SQL\n";
         }
-        std::cout << data_point << "\n\n";
+        std::cout << data_point << "\n" << std::endl;
 
         stats_tap.service_tap();
     }
