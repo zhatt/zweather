@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# Run the services in a Podman pod for demo.
+#
+
+set -x
+
+podman pod create \
+	--publish 5555:5555 ${comment:+ edge server port} \
+	--publish 6555:6555 ${comment:+ edge server tap port} \
+	--publish 6556:6556 ${comment:+ sql store tap port} \
+	--publish 6557:6557 ${comment:+ raw store tap port} \
+	--name mypod
+
+podman run \
+	--name weather_edge_server \
+	--detach \
+	--rm=true \
+	--pod mypod \
+	zhatt/zweather/weather_edge_server
+
+podman run \
+	--name weather_sql_store \
+	--detach \
+	--rm=true \
+	--pod mypod \
+	zhatt/zweather/weather_sql_store
+
+podman run \
+	--name weather_raw_store \
+	--volume rawlogs:/data \
+	--detach \
+	--rm=true \
+	--pod mypod \
+	zhatt/zweather/weather_raw_store
+
