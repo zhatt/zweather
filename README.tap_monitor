@@ -1,0 +1,14 @@
+# The tap_monitor needs extended to monitor all service.  It currently monitors
+# the weather_edge_server by default.
+#
+# You can monitor more frequently by setting the TAP_MONITOR_MONITOR_INTERVAL
+# environment variable.  For example every 5 seconds.
+
+TAP_MONITOR_MONITOR_INTERVAL=5 ./tap_monitor
+
+# The services all use the same tap port so you can use the tap_monitor to
+# monitor any of them.  For example to monitor the raw store you can just
+# tell it the raw store tap port number for the edge server.
+
+TAP_MONITOR_EDGE_SERVER_TAP_PORT=6557 TAP_MONITOR_MONITOR_INTERVAL=5 ./tap_monitor
+
