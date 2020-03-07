@@ -13,7 +13,7 @@
 
 static Tune
 setup_tuning_variables() {
-    Tune tune( "WEATHER_RAW_STORE_" );
+    Tune tune( "WEATHER_EDGE_SERVER_" );
 
     tune.add_variable( "LISTEN_PORT", "5555" );
     tune.add_variable( "TAP_PORT", "6555" );
