@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Build all containers
+#
+
+set -o errexit
+
+containers=( weather_edge_server weather_raw_store weather_sql_store )
+
+for container in "${containers[@]}"; do
+
+    echo -e "\nBuilding ${container}"
+    podman build -f "Dockerfile.${container}" --tag "zhatt/zweather/${container}"
+
+done
+

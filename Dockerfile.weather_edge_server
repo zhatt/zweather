@@ -1,0 +1,13 @@
+FROM fedora
+
+RUN dnf install --assumeyes protobuf
+RUN dnf install --assumeyes zeromq
+RUN dnf clean all
+
+WORKDIR /app
+COPY weather_edge_server .
+
+EXPOSE 5555  # Service port
+EXPOSE 6555  # Tap port
+
+CMD [ "./weather_edge_server" ]

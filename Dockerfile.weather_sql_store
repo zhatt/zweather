@@ -1,0 +1,13 @@
+FROM fedora
+
+RUN dnf install --assumeyes protobuf
+RUN dnf install --assumeyes zeromq
+RUN dnf clean all
+
+WORKDIR /app
+COPY weather_sql_store .
+
+EXPOSE 5556  # Service port
+EXPOSE 6556  # Tap port
+
+CMD [ "./weather_sql_store" ]
