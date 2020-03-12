@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -o errexit
+
+declare -i num_stations=${1-1}
+
+declare -a procs
+
+cleanup() {
+	kill "${procs[@]}"
+}
+
+trap cleanup EXIT
+
+for (( i = 0; i < num_stations; i++ )) ; do
+	echo starting station $i
+	./weather_station >/dev/null &
+	procs+=($!)
+done
+
+echo "$i stations running"
+wait
