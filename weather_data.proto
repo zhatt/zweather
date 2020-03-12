@@ -1,7 +1,4 @@
-// weather_data protobuf
-//
-// This is used for transfering data from remote stations and in the data
-// pipeline.
+// weather_data protobuf definitions
 
 syntax = "proto3";
 
@@ -21,8 +18,12 @@ message Coordinates {
   float longitude = 2;
 }
 
+// Message type used for transfering data from remote stations and in the data
+// pipeline.
 message WeatherData {
   // TODO Should I add protocol version number?
+  // TODO Do I need to add any integrity checking or magic number to this data
+  // structure to protect against corruption?
   string authentication_token = 1;
   string station_id = 2;
 
@@ -46,6 +47,7 @@ message WeatherData {
   // wind, etc.
 }
 
+// Message type for monitoring taps.
 message TapStats {
     uint64 bytes_received = 1;
     uint64 bytes_sent = 2;

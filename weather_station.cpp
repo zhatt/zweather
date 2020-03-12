@@ -1,3 +1,8 @@
+/*
+ * Weather Station Client
+ *
+ * Example weather station client.  Sends dummy data.
+ */
 
 #include <iostream>
 #include <string>
@@ -44,8 +49,8 @@ int main() {
 
     data_point.set_authentication_token("secret");
 
-    // The station ID will probably be a UUID in a real endpoint.  Use PID for
-    // testing.
+    // The station ID will probably be a UUID in a real endpoint.  Use a PID for
+    // testing to get different station names.
     std::ostringstream station_id;
     station_id << "station" << getpid();
     data_point.set_station_id(station_id.str());
@@ -53,7 +58,8 @@ int main() {
     data_point.mutable_location()->set_longitude(-122.401389);
 
     while(true) {
-        // FIXME  We are sending dummy data and it is all the same.
+        // FIXME  We are sending dummy data and it is all the same except for
+        // the timestamps.
         data_point.set_temperature(12.22);  // degrees celsius
         data_point.set_humidity(57);  // percent
 

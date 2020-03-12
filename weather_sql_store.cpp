@@ -1,3 +1,15 @@
+/*
+ * Weather SQL Store
+ *
+ * This is the SQL store process.  It handles data sent from the
+ * weather_edge_server.  WeatherData protobufs are received and should be
+ * written to a structured store such as SQL.  The current implementation is a
+ * dummy store that just prints the data that needs to be stored.
+ *
+ * We only store one data every THROTTLE_TIME seconds which is 60 seconds by
+ * default.
+ */
+
 #include <string>
 #include <iostream>
 
@@ -24,7 +36,7 @@ setup_tuning_variables() {
 class Throttler {
     const unsigned long throttle_time; // Seconds
 
-    //  Last time a station was allowed to insert.
+    //  Last time a station was allowed to save a datapoint.
     std::map<std::string,uint64_t> last_inserted_times;
 
   public:
@@ -96,7 +108,7 @@ int main()
 
         if ( throttler.can_insert( data_point.station_id() ) ) {
             std::cout << "Inserting in SQL\n";
-            // TODO add SQL backend.
+            // TODO add SQL or other structured store backend.
         } else {
             std::cout << "Not inserting in SQL\n";
         }

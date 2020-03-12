@@ -45,12 +45,19 @@ int main()
 
     for (;;) {
         // FIXME make non-blocking and monitor the other services.
+
+        // Send a request for data.  This is just an empty request.  The tap
+        // will always send the stats back.  This should be made non-blocking
+        // or have a timeout.  We could then detect a failed endpoint and take
+        // a recovery action.
         zmq::message_t request(0);
         socket.send( request );
 
+        // Get the reply protobuf.
         zmq::message_t reply;
         socket.recv( reply, zmq::recv_flags::none );
 
+        // Convert zmq message to protobuf and print it.
         zweather::TapStats stats;
         std::string data( reinterpret_cast<const char*>( reply.data() ) );
         stats.ParseFromString( data );

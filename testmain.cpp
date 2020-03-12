@@ -1,3 +1,7 @@
+/*
+ * Basic Google Test main function for all test.
+ */
+
 #include <gtest/gtest.h>
 
 int main( int argc, char **argv ) {

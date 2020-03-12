@@ -1,3 +1,16 @@
+/*
+ * Weather Raw Store
+ *
+ * This is the raw store process.  It handles data sent from the
+ * weather_edge_server.  WeatherData protobufs are received, encoded as base 64
+ * and saved to flat files.  The location and size of the flat files is
+ * configurable.  The files are named 'raw--<timestamp>.log' for example
+ * raw--2020-03-04T02:27:15.log.  When the file size is exceeded the log file
+ * will be closed and a new one will be created.  The last may make the file
+ * slightly larger then the rotation size configured.
+ *
+ */
+
 #include <fcntl.h>
 #include <fstream>
 #include <iostream>
@@ -73,8 +86,19 @@ class RawLogWriter {
 
     void open_log() {
         std::string log_name = generate_log_name( prefix );
+        // Use O_EXCL so we don't clobber a file created by raw stores running
+        // in parallel.
         fd = open(log_name.c_str(), O_CREAT|O_EXCL|O_WRONLY, 0777);
         if (fd == -1) {
+            // NB.  I see this during testing when using a small rotation size.
+            // We fill one file and try to open a second file during the same
+            // second as the previous one.  The edge server will queue messages
+            // and deliver them in a burst when the raw server starts so keep
+            // that in mind if you get this message when testing with a small
+            // rotation size.
+            //
+            // You should just restart this process if that happens to work
+            // through the backlog.
             throw( std::runtime_error( "log file open failed" ) );
         }
     }

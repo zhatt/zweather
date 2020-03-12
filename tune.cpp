@@ -1,3 +1,6 @@
+/*
+ * Tune class implementation.
+ */
 
 #include <iostream>
 #include "tune.h"

@@ -1,3 +1,10 @@
+/*
+ * Weather Edge Server
+ *
+ * This is the edge server service process.  It handles ingest of data from
+ * weather station clients.
+ */
+
 #include <string>
 #include <iostream>
 

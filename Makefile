@@ -1,4 +1,3 @@
-
 PROTO_PATH = .
 
 CXXFLAGS = -Wall -Werror -Og -g -Wdeprecated-declarations
@@ -8,7 +7,7 @@ CXXFLAGS += -I/usr/include/google/protobuf -I/usr/include/google
 
 LDFLAGS = -lstdc++ -lprotobuf -lzmq
 
-PROGS += tap_monitor 
+PROGS += tap_monitor
 PROGS += weather_station
 PROGS += weather_edge_server
 PROGS += weather_sql_store

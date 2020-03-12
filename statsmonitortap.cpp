@@ -1,3 +1,7 @@
+/*
+ * StatsMonitorTap class implementation.
+ */
+
 #include <iostream>
 
 #include "statsmonitortap.h"
